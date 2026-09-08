@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LABPP · Taller de Indicadores — Ejercicios Prácticos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1F3864;--navy-d:#132445;--navy-l:#2A4A85;--orange:#E87D2B;--blue:#3FA9DC;--blue-l:#EBF6FD;--gray:#F4F5F8;--dgray:#3A3A5A;--green:#1A6B3A;--white:#FFFFFF;--border:#DDE3F0;--shadow:rgba(31,56,100,0.10);--radius:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',Arial,sans-serif;background:#ECEEF5;color:var(--dgray);min-height:100vh;line-height:1.6}
+
+.site-header{background:var(--navy-d);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 4px 24px rgba(0,0,0,0.28)}
+.header-inner{padding:16px 28px 12px;display:flex;flex-direction:column;gap:2px}
+.badge-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.badge{background:var(--blue);color:white;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px}
+.badge-orange{background:var(--orange)}
+.header-title{font-family:'DM Serif Display',serif;font-size:20px;color:white;line-height:1.25}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:1px}
+.progress-wrap{background:rgba(255,255,255,0.12);height:3px;margin-top:12px}
+.progress-bar{height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));transition:width .5s;width:0%}
+
+.container{max-width:820px;margin:0 auto;padding:28px 18px 80px;display:flex;flex-direction:column;gap:24px}
+
+.card{background:white;border-radius:var(--radius);box-shadow:0 2px 16px var(--shadow);overflow:hidden;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.10s}.card:nth-child(3){animation-delay:.15s}.card:nth-child(4){animation-delay:.20s}.card:nth-child(5){animation-delay:.25s}
+
+.card-stripe{height:4px;background:linear-gradient(90deg,var(--blue),var(--navy))}
+.card-body{padding:22px 24px}
+.team-card h2{font-family:'DM Serif Display',serif;font-size:17px;color:var(--navy);margin-bottom:16px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-grid .field-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:600;color:var(--navy);letter-spacing:.4px;text-transform:uppercase}
+.field input,.field select{border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--dgray);background:var(--gray);transition:border-color .2s,box-shadow .2s;width:100%;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(63,169,220,0.16);background:white}
+.field select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233FA9DC' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px}
+
+.scenario-header{background:var(--navy);padding:18px 24px;position:relative;overflow:hidden}
+.scenario-header::before{content:'';position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:rgba(63,169,220,0.08)}
+.scenario-header::after{content:'';position:absolute;right:20px;bottom:-40px;width:90px;height:90px;border-radius:50%;background:rgba(232,125,43,0.07)}
+.scenario-tag{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:4px}
+.scenario-title{font-family:'DM Serif Display',serif;font-size:19px;color:white;line-height:1.2;margin-bottom:3px}
+.scenario-sub{font-size:12px;color:rgba(255,255,255,0.55)}
+.scenario-body{padding:22px 24px;display:flex;flex-direction:column;gap:20px}
+
+.context-box{background:#F8FBFF;border:1.5px solid #C5E5F6;border-radius:10px;padding:16px 18px}
+.context-box .ctx-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin-bottom:8px}
+.context-box p{font-size:13.5px;color:var(--dgray);line-height:1.65}
+.context-box .data-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.data-pill{background:white;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:6px}
+.data-pill .dp-val{color:var(--orange);font-size:14px;font-weight:700}
+.context-box .src-note{background:#FFF5EC;border:1.5px solid #F5D8BC;border-radius:8px;padding:10px 13px;font-size:12.5px;color:#8A4A0F;margin-top:12px;line-height:1.55}
+
+.task-block{border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.task-head{background:#FFF5EC;border-bottom:1.5px solid #F5D8BC;padding:9px 16px;display:flex;align-items:center;gap:10px}
+.task-num{background:var(--orange);color:white;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.task-title{font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.3px;text-transform:uppercase}
+.task-question{padding:12px 16px;background:#FFFAF6;font-size:13.5px;color:var(--navy);font-weight:600;line-height:1.55;border-bottom:1.5px solid var(--border)}
+.task-body{padding:16px;display:flex;flex-direction:column;gap:14px;background:white}
+
+.theory-box{background:#EEF4FF;border:1.5px solid #C8D8F8;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--navy);line-height:1.55}
+.theory-box strong{color:var(--navy-l);font-weight:700}
+
+.options-label{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.options-grid{display:flex;flex-direction:column;gap:7px}
+.option-label{display:flex;align-items:flex-start;gap:11px;background:var(--gray);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;cursor:pointer;transition:border-color .18s,background .18s,transform .12s;font-size:13px;line-height:1.48;user-select:none}
+.option-label:hover{border-color:var(--blue);background:#EEF6FC;transform:translateX(2px)}
+.option-label input[type="radio"],.option-label input[type="checkbox"]{margin-top:2px;accent-color:var(--navy);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.option-label.selected{border-color:var(--navy);background:#EEF0FB}
+.option-label.selected span{color:var(--navy);font-weight:600}
+
+.indicator-builder{background:var(--gray);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ib-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.ib-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.ib-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ib-field{display:flex;flex-direction:column;gap:4px}
+.ib-field.full{grid-column:1/-1}
+.ib-field label{font-size:10.5px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px}
+.ib-field input,.ib-field select,.ib-field textarea{border:1.5px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--dgray);background:white;width:100%;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+.ib-field input:focus,.ib-field select:focus,.ib-field textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(63,169,220,0.14);background:white}
+.ib-field select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233FA9DC' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.ib-field textarea{resize:vertical;min-height:60px;line-height:1.5}
+.ib-field input[readonly]{background:#EFF2F8;color:#666;cursor:not-allowed}
+
+.textarea-wrap{display:flex;flex-direction:column;gap:5px}
+.textarea-wrap label{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px}
+textarea{border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--dgray);background:var(--gray);resize:vertical;min-height:72px;transition:border-color .2s,box-shadow .2s;width:100%;line-height:1.55}
+textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(63,169,220,0.14);background:white}
+.char-count{font-size:10.5px;color:#bbb;text-align:right}
+
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{padding:14px 24px;border:none;border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;transition:transform .12s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:8px;flex:1;min-width:150px}
+.btn:active{transform:scale(0.97)}
+.btn-submit{background:var(--green);color:white}.btn-submit:hover{box-shadow:0 6px 20px rgba(26,107,58,0.38)}
+.btn-primary{background:var(--navy);color:white}.btn-primary:hover{box-shadow:0 6px 20px rgba(31,56,100,0.35)}
+.btn-secondary{background:var(--orange);color:white}.btn-secondary:hover{box-shadow:0 6px 20px rgba(232,125,43,0.38)}
+.btn-outline{background:white;color:var(--navy);border:2px solid var(--border)}.btn-outline:hover{border-color:var(--navy)}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);color:white;padding:13px 24px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.2);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;background:var(--green)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.submitted-overlay{display:none;position:fixed;inset:0;background:rgba(19,36,69,0.97);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:white;font-family:'DM Sans',sans-serif;text-align:center;padding:20px}
+.submitted-overlay.show{display:flex}
+.submitted-overlay .big-check{font-size:64px}
+.submitted-overlay h2{font-family:'DM Serif Display',serif;font-size:28px}
+.submitted-overlay p{font-size:15px;opacity:.8;max-width:380px}
+footer{text-align:center;font-size:11px;color:#b0b4c8;padding:0 16px 40px;line-height:1.7}
+footer span{color:var(--orange)}
+.setup-banner{background:#FFF5EC;border-bottom:2px solid var(--orange);padding:10px 18px;font-size:12px;color:#8A4A0F;text-align:center;display:none}
+.setup-banner.show{display:block}
+@media(max-width:600px){.field-grid,.ib-grid{grid-template-columns:1fr}.field-grid .field-full,.ib-field.full{grid-column:1}.header-title{font-size:17px}.scenario-title{font-size:17px}}
+@media print{body{background:white}.site-header,.setup-banner{position:static;box-shadow:none}.actions,.progress-wrap,.toast{display:none!important}.container{padding:10px;gap:16px}.card{box-shadow:none;border:1px solid var(--border)}}
+</style>
+</head>
+<body>
+
+<div class="submitted-overlay" id="submittedOverlay">
+  <div class="big-check">✅</div>
+  <h2>¡Ejercicios enviados!</h2>
+  <p>Las respuestas de tu equipo quedaron registradas. El facilitador puede verlas en tiempo real en el panel.</p>
+  <button class="btn btn-outline" style="margin-top:8px;color:white;border-color:rgba(255,255,255,0.4);min-width:auto;flex:none" onclick="document.getElementById('submittedOverlay').classList.remove('show')">Cerrar</button>
+</div>
+
+<div class="setup-banner" id="setupBanner">⚠️ Este formulario aún usa una configuración de Firebase de ejemplo — reemplázala en el código antes del taller (ver comentario "FIREBASE_CONFIG" al final del archivo).</div>
+
+<div class="site-header">
+  <div class="header-inner">
+    <div class="badge-row">
+      <span class="badge">LABPP · MINPRE</span>
+      <span class="badge badge-orange">Taller Interno · 2026</span>
+    </div>
+    <div class="header-title">Taller: Creación de Indicadores</div>
+    <div class="header-sub">Guía de Ejercicios Prácticos &nbsp;·&nbsp; Laboratorio de Políticas Públicas</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- DATOS DEL EQUIPO -->
+  <div class="card team-card">
+    <div class="card-stripe"></div>
+    <div class="card-body">
+      <h2>📋 Datos del equipo</h2>
+      <div class="field-grid">
+        <div class="field"><label for="mesa">Mesa / Equipo</label><input type="text" id="mesa" placeholder="Ej: Mesa 3 — Azul" autocomplete="off"></div>
+        <div class="field"><label for="relator">Relator/a</label><input type="text" id="relator" placeholder="Nombre completo" autocomplete="off"></div>
+        <div class="field field-full"><label for="integrantes">Integrantes</label><input type="text" id="integrantes" placeholder="Nombres separados por coma" autocomplete="off"></div>
+        <div class="field field-full">
+          <label for="direccion">Dirección / Área</label>
+          <select id="direccion">
+            <option value="">Selecciona una opción…</option>
+            <option>Dirección de Inteligencia de Datos</option>
+            <option>Viceministerio de Coordinación y Seguimiento Gubernamental</option>
+            <option>Otra dependencia del MINPRE</option>
+            <option>Institución externa acompañada por el LABPP</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ESCENARIO 1 — DEBATE DE FUENTES
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="scenario-header">
+      <div class="scenario-tag">Escenario 1 de 3 · Debate de fuentes</div>
+      <div class="scenario-title">Tres fuentes, tres números distintos</div>
+      <div class="scenario-sub">Tasa de Mortalidad Infantil — caso real del tablero SAI-MEPyD</div>
+    </div>
+    <div class="scenario-body">
+
+      <div class="context-box">
+        <div class="ctx-label">📖 Contexto del caso (real)</div>
+        <p>La Tasa de Mortalidad Infantil (por 1,000 nacidos vivos) es un indicador priorizado de Salud, con dirección descendente y meta 2028 de 13. Su fuente oficial es el Sistema Nacional de Vigilancia Epidemiológica (SINAVE-DIGEPI).</p>
+        <div class="data-pills">
+          <div class="data-pill">Valor 2024 <span class="dp-val">15.92</span></div>
+          <div class="data-pill">Valor 2025 <span class="dp-val">20.68</span></div>
+          <div class="data-pill">Meta 2028 <span class="dp-val">13</span></div>
+        </div>
+        <div class="src-note">📝 <strong>Nota real del catálogo:</strong> "Se detectaron diferencias entre el dato de Monitoreo-MEPyD, lo publicado en el SISDOM, y los datos enviados directamente por Salud Pública. A partir del primer Consejo de Ministros de 2025 se decidió pedir los datos directamente al equipo de Planificación de Salud Pública."</div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">1</div><div class="task-title">¿Qué hace el equipo técnico ante 3 fuentes distintas?</div></div>
+        <div class="task-question">Monitoreo-MEPyD, el SISDOM y Salud Pública reportan valores distintos para el mismo indicador y el mismo período. ¿Cuál es la posición correcta del equipo técnico?</div>
+        <div class="task-body">
+          <div class="theory-box">💡 <strong>Recuerda:</strong> un buen indicador requiere que la fuente sea confiable, oportuna y representativa. Cuando dos o más fuentes difieren, hay que analizar por qué — no simplemente elegir el número más conveniente para el informe.</div>
+          <div>
+            <div class="options-label">La posición del equipo es:</div>
+            <div class="options-grid">
+              <label class="option-label"><input type="radio" name="e1t1" value="A"><span>A. Usar el valor que más se acerque a la meta — así el informe se ve mejor</span></label>
+              <label class="option-label"><input type="radio" name="e1t1" value="B"><span>B. Promediar mecánicamente los 3 valores sin más análisis</span></label>
+              <label class="option-label"><input type="radio" name="e1t1" value="C"><span>C. Elegir una fuente oficial única y consistente en el tiempo, documentar por qué se eligió, y dejar constancia de las diferencias en la ficha de metadata</span></label>
+              <label class="option-label"><input type="radio" name="e1t1" value="D"><span>D. No reportar el indicador hasta que las 3 fuentes coincidan exactamente</span></label>
+            </div>
+          </div>
+          <div class="textarea-wrap">
+            <label for="e1t1-arg">¿Por qué eligieron esa opción? Argumenten:</label>
+            <textarea id="e1t1-arg" placeholder="Expliquen la lógica detrás de su elección…" rows="3" oninput="countChars(this,'e1t1-cnt')"></textarea>
+            <div class="char-count" id="e1t1-cnt">0 caracteres</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">2</div><div class="task-title">Documenten la decisión en la ficha de metadata</div></div>
+        <div class="task-question">Redacten cómo quedaría documentada la fuente y la nota metodológica de este indicador, tal como iría en el campo "Observaciones" del catálogo.</div>
+        <div class="task-body">
+          <div class="indicator-builder">
+            <div class="ib-title">📌 Documentación de fuente</div>
+            <div class="ib-grid">
+              <div class="ib-field full"><label for="e1-fuente-elegida">Fuente oficial elegida</label><input type="text" id="e1-fuente-elegida" placeholder="Ej: Salud Pública (Dirección de Planificación), a partir de 2025"></div>
+              <div class="ib-field full"><label for="e1-por-que">¿Por qué esa fuente y no las otras dos?</label><input type="text" id="e1-por-que" placeholder="Ej: Es la fuente primaria; SINAVE y SISDOM dependen de ella con rezago"></div>
+              <div class="ib-field full"><label for="e1-observacion">Nota metodológica para el campo "Observaciones"</label><textarea id="e1-observacion" placeholder="Redacten la nota tal como debería quedar documentada en el catálogo…" rows="3"></textarea></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">3</div><div class="task-title">Implicaciones para la línea base</div></div>
+        <div class="task-question">Si el equipo cambia de fuente a mitad de la serie histórica (como ocurrió realmente en este caso), ¿qué pasa con la línea base y la comparabilidad de los datos anteriores?</div>
+        <div class="task-body">
+          <div class="theory-box">💡 <strong>Recuerda:</strong> cambiar la fuente sin documentarlo es uno de los errores más comunes de línea base. La regla es: solo se modifica con un cambio metodológico justificado y documentado, recalculando o marcando claramente el quiebre de la serie.</div>
+          <div class="textarea-wrap">
+            <label for="e1t3-arg">¿Debe recalcularse la línea base? ¿Cómo lo marcarían en la serie histórica?</label>
+            <textarea id="e1t3-arg" placeholder="¿Los valores de 2015-2024 siguen siendo comparables con los de 2025 en adelante?" rows="3" oninput="countChars(this,'e1t3-cnt')"></textarea>
+            <div class="char-count" id="e1t3-cnt">0 caracteres</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ESCENARIO 2 — LA MEJOR FÓRMULA
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="scenario-header" style="background:linear-gradient(135deg,#16305E,#1F3864)">
+      <div class="scenario-tag">Escenario 2 de 3 · La mejor fórmula</div>
+      <div class="scenario-title">¿Cómo se calcula realmente?</div>
+      <div class="scenario-sub">Densidad del parque vehicular en zonas metropolitanas — caso real del tablero</div>
+    </div>
+    <div class="scenario-body">
+
+      <div class="context-box">
+        <div class="ctx-label">📖 Contexto del caso (real)</div>
+        <p>Este indicador prioritario de Transporte mide qué tan denso es el parque vehicular en las principales zonas metropolitanas del país (Distrito Nacional, Santo Domingo, Santiago, San Cristóbal, La Vega, Puerto Plata, Duarte y La Romana). Su dirección es descendente — menos densidad es mejor.</p>
+        <div class="data-pills">
+          <div class="data-pill">Numerador <span class="dp-val">Parque vehicular en la zona metropolitana</span></div>
+          <div class="data-pill">Denominador <span class="dp-val">Población de la zona metropolitana</span></div>
+          <div class="data-pill">Valor 2023 <span class="dp-val">0.59</span></div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">1</div><div class="task-title">Elijan la fórmula correcta</div></div>
+        <div class="task-question">Dado el numerador y denominador reales de arriba, ¿cuál de estas 4 fórmulas es la que efectivamente usa el catálogo?</div>
+        <div class="task-body">
+          <div class="theory-box">💡 <strong>Recuerda:</strong> el denominador debe corresponder exactamente a la población en riesgo o de referencia — no a un universo más amplio ni más pequeño del que define el objetivo del indicador.</div>
+          <div>
+            <div class="options-label">La fórmula correcta es:</div>
+            <div class="options-grid">
+              <label class="option-label"><input type="radio" name="e2t1" value="A"><span>A. Parque vehicular de la zona metropolitana ÷ Población total del país</span></label>
+              <label class="option-label"><input type="radio" name="e2t1" value="B"><span>B. Parque vehicular de la zona metropolitana ÷ Población de la zona metropolitana</span></label>
+              <label class="option-label"><input type="radio" name="e2t1" value="C"><span>C. Parque vehicular de la zona metropolitana ÷ Superficie en km² de la zona metropolitana</span></label>
+              <label class="option-label"><input type="radio" name="e2t1" value="D"><span>D. (Parque vehicular de la zona metropolitana ÷ Población de la zona metropolitana) × 1,000</span></label>
+            </div>
+          </div>
+          <div class="textarea-wrap">
+            <label for="e2t1-arg">¿Por qué las otras 3 opciones están mal, aunque parezcan razonables?</label>
+            <textarea id="e2t1-arg" placeholder="Piensen en qué cambia el resultado si el denominador es la población nacional, o si se usa superficie en vez de población…" rows="3" oninput="countChars(this,'e2t1-cnt')"></textarea>
+            <div class="char-count" id="e2t1-cnt">0 caracteres</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">2</div><div class="task-title">Prueben la fórmula con datos reales</div></div>
+        <div class="task-question">Con los datos históricos del indicador (0.39 en 2015 → 0.59 en 2023, sin multiplicar por ninguna constante), calculen qué pasaría si en 2024 el parque vehicular fuera de 6,100,000 vehículos y la población de la zona metropolitana fuera de 10,400,000 habitantes.</div>
+        <div class="task-body">
+          <div class="indicator-builder">
+            <div class="ib-title">🔢 Aplicación de la fórmula</div>
+            <div class="ib-grid">
+              <div class="ib-field"><label for="e2-calculo">Tu cálculo para 2024</label><input type="text" id="e2-calculo" placeholder="Ej: 6,100,000 ÷ 10,400,000 = 0.587"></div>
+              <div class="ib-field"><label for="e2-tendencia">¿Sube o baja respecto a 2023 (0.59)?</label><input type="text" id="e2-tendencia" placeholder="Ej: Baja levemente — mejora marginal"></div>
+              <div class="ib-field full"><label for="e2-interpretacion">Interpretación para el informe de seguimiento</label><textarea id="e2-interpretacion" placeholder="Redacten una frase breve como aparecería en el informe trimestral…" rows="2"></textarea></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">3</div><div class="task-title">Unidad de medida y constante</div></div>
+        <div class="task-question">¿Debería este indicador expresarse con una constante (por ejemplo, "vehículos por cada 1,000 habitantes") para que sea más comprensible? ¿Cambia el valor real o solo la forma de leerlo?</div>
+        <div class="task-body">
+          <div class="theory-box">💡 <strong>Recuerda:</strong> la constante (×100, ×1,000, ×100,000) no cambia lo que mide el indicador — solo lo hace más legible. Multiplicar por una constante no corrige un denominador mal elegido.</div>
+          <div class="textarea-wrap">
+            <label for="e2t3-arg">Propongan la unidad de medida final del indicador y justifiquen</label>
+            <textarea id="e2t3-arg" placeholder="Ej: mantenerlo como razón simple, o expresarlo como 'vehículos por cada 1,000 habitantes'…" rows="3" oninput="countChars(this,'e2t3-cnt')"></textarea>
+            <div class="char-count" id="e2t3-cnt">0 caracteres</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ESCENARIO 3 — CREACIÓN DESDE CERO
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="scenario-header" style="background:linear-gradient(135deg,#5A1F1F,#8C3B1F)">
+      <div class="scenario-tag">Escenario 3 de 3 · Creación desde cero</div>
+      <div class="scenario-title">Complétenlo ustedes: falta línea base y meta</div>
+      <div class="scenario-sub">Tiempo de respuesta a llamadas del 911 — indicador real, incompleto en el tablero</div>
+    </div>
+    <div class="scenario-body">
+
+      <div class="context-box">
+        <div class="ctx-label">📖 Contexto del caso (real)</div>
+        <p>Este indicador ya está en el catálogo del tablero, asociado a la Meta Prioritaria "Seguridad y libertad" (la misma de la Tasa de Homicidios). Ya tiene nombre, fórmula y fuente definidos — pero le falta línea base, meta y confirmar su tipología. Es trabajo real, pendiente de completar.</p>
+        <div class="data-pills">
+          <div class="data-pill">Nombre <span class="dp-val">Tiempo promedio de respuesta a llamadas del 911</span></div>
+          <div class="data-pill">Unidad <span class="dp-val">Minutos</span></div>
+          <div class="data-pill">Fuente <span class="dp-val">Sistema Nacional de Atención a Emergencias 911</span></div>
+          <div class="data-pill">Periodicidad sugerida <span class="dp-val">Trimestral</span></div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">1</div><div class="task-title">Objetivo, factor relevante y tipología</div></div>
+        <div class="task-question">Apliquen el Paso 1: ¿cuál es el objetivo al que responde este indicador, cuál es su factor relevante, y en qué nivel de la cadena de valor está?</div>
+        <div class="task-body">
+          <div class="theory-box">💡 <strong>Recuerda:</strong> el factor relevante es la palabra que, si se elimina, el objetivo pierde sentido. La fórmula: Suma de tiempos de respuesta ÷ Cantidad de llamadas atendidas.</div>
+          <div class="textarea-wrap">
+            <label for="e3-factor">Factor relevante del objetivo</label>
+            <textarea id="e3-factor" placeholder="Ej: tiempo de respuesta operativa de la Policía Nacional ante emergencias" rows="2" oninput="countChars(this,'e3-factor-cnt')"></textarea>
+            <div class="char-count" id="e3-factor-cnt">0 caracteres</div>
+          </div>
+          <div>
+            <div class="options-label">Nivel en la cadena de valor:</div>
+            <div class="options-grid">
+              <label class="option-label"><input type="radio" name="e3tipo" value="Proceso"><span>Proceso — mide la ejecución de una operación policial</span></label>
+              <label class="option-label"><input type="radio" name="e3tipo" value="Producto"><span>Producto — cuenta cuántas llamadas se atendieron</span></label>
+              <label class="option-label"><input type="radio" name="e3tipo" value="Resultado"><span>Resultado — mide un cambio de condición en la seguridad ciudadana</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">2</div><div class="task-title">Propongan línea base y meta</div></div>
+        <div class="task-question">No existen valores históricos todavía. Propongan cómo obtendrían la línea base y qué meta 2028 sería razonable.</div>
+        <div class="task-body">
+          <div class="indicator-builder">
+            <div class="ib-title">🏗️ Línea base y meta propuestas</div>
+            <div class="ib-grid">
+              <div class="ib-field"><label for="e3-linea-valor">Línea base propuesta</label><input type="text" id="e3-linea-valor" placeholder="Ej: 9 minutos (primer trimestre medido)"></div>
+              <div class="ib-field"><label for="e3-linea-anio">Año / período de referencia</label><input type="text" id="e3-linea-anio" placeholder="Ej: 2026, primer trimestre de medición"></div>
+              <div class="ib-field"><label for="e3-meta">Meta 2028 propuesta</label><input type="text" id="e3-meta" placeholder="Ej: 6 minutos"></div>
+              <div class="ib-field"><label for="e3-frecuencia">Frecuencia de medición</label>
+                <select id="e3-frecuencia">
+                  <option value="">Selecciona…</option>
+                  <option>Mensual</option><option>Trimestral</option><option>Semestral</option><option>Anual</option>
+                </select>
+              </div>
+              <div class="ib-field full"><label for="e3-justif">¿Cómo llegaron a esa línea base y meta, sin datos históricos previos?</label><textarea id="e3-justif" placeholder="¿Usarían un piloto de un trimestre? ¿Un benchmark de otro país o servicio similar?" rows="3" oninput="countChars(this,'e3-justif-cnt')"></textarea><div class="char-count" id="e3-justif-cnt">0 caracteres</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-head"><div class="task-num">3</div><div class="task-title">Completen la ficha de metadata</div></div>
+        <div class="task-question">Cierren el indicador con los campos que faltan para que pueda entrar formalmente al catálogo del tablero.</div>
+        <div class="task-body">
+          <div class="indicator-builder">
+            <div class="ib-title">📋 Ficha de Metadata — Tiempo de respuesta 911</div>
+            <div class="ib-grid">
+              <div class="ib-field full"><label for="e3-objetivo">Objetivo asociado</label><input type="text" id="e3-objetivo" placeholder="Ej: Mejorar la capacidad de respuesta operativa ante emergencias de seguridad"></div>
+              <div class="ib-field full"><label for="e3-verificacion">Medio de verificación</label><input type="text" id="e3-verificacion" placeholder="Ej: Base de datos del Sistema Nacional de Atención a Emergencias 911"></div>
+              <div class="ib-field"><label for="e3-responsable">Responsable</label><input type="text" id="e3-responsable" placeholder="Ej: Sistema 911 + Policía Nacional"></div>
+              <div class="ib-field"><label for="e3-desagregacion">Desagregación posible</label><input type="text" id="e3-desagregacion" placeholder="Ej: Provincia, tipo de emergencia"></div>
+            </div>
+          </div>
+          <div class="textarea-wrap">
+            <label for="e3-cmvoad">Revisen su propia ficha contra CMVOAD: ¿qué criterio quedó más débil y cómo lo mejorarían?</label>
+            <textarea id="e3-cmvoad" placeholder="¿Conciso? ¿Medible? ¿Válido? ¿Oportuno? ¿Alcanzable? ¿Delimitado?" rows="3" oninput="countChars(this,'e3-cmvoad-cnt')"></textarea>
+            <div class="char-count" id="e3-cmvoad-cnt">0 caracteres</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REFLEXIÓN FINAL -->
+  <div class="card">
+    <div class="scenario-header" style="background:linear-gradient(135deg,var(--navy-d),var(--navy-l))">
+      <div class="scenario-tag">Cierre del Taller</div>
+      <div class="scenario-title">Reflexión final del equipo</div>
+      <div class="scenario-sub">Aprendizajes sobre indicadores aplicados al LABPP/MINPRE</div>
+    </div>
+    <div class="scenario-body">
+      <div class="textarea-wrap">
+        <label for="ref1">De los 3 ejercicios (fuentes, fórmula, creación), ¿cuál le costó más al equipo y por qué?</label>
+        <textarea id="ref1" placeholder="¿El debate de fuentes? ¿Elegir la fórmula correcta? ¿Crear el indicador desde cero?" rows="3" oninput="countChars(this,'ref1-cnt')"></textarea>
+        <div class="char-count" id="ref1-cnt">0 caracteres</div>
+      </div>
+      <div class="textarea-wrap">
+        <label for="ref2">¿Qué otro indicador del tablero creen que tiene un problema similar (fuentes en conflicto, fórmula ambigua, o falta por crear)?</label>
+        <textarea id="ref2" placeholder="Propuesta libre del equipo, con nombre del indicador y qué le pasa…" rows="3" oninput="countChars(this,'ref2-cnt')"></textarea>
+        <div class="char-count" id="ref2-cnt">0 caracteres</div>
+      </div>
+      <div class="textarea-wrap">
+        <label for="ref3">¿Cómo cambiaría la gestión pública si todos los indicadores del tablero pasaran por este mismo nivel de escrutinio?</label>
+        <textarea id="ref3" placeholder="Reflexionen sobre el impacto concreto en la toma de decisiones del MINPRE…" rows="3" oninput="countChars(this,'ref3-cnt')"></textarea>
+        <div class="char-count" id="ref3-cnt">0 caracteres</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="actions">
+    <button class="btn btn-submit" onclick="submitToFirebase()">📤 Enviar al facilitador</button>
+    <button class="btn btn-primary" onclick="saveLocal()">💾 Guardar borrador</button>
+    <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir / PDF</button>
+    <button class="btn btn-outline" onclick="clearForm()">🗑️ Limpiar</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>LABPP · Laboratorio de Políticas Públicas MINPRE &nbsp;·&nbsp; Taller Interno de Creación de Indicadores &nbsp;·&nbsp; <span>República Dominicana · 2026</span></footer>
+
+<!-- ══════════════════════════════════════════════════
+     FIREBASE_CONFIG — REEMPLAZA ESTO ANTES DEL TALLER
+     1. Ve a https://console.firebase.google.com → crea un proyecto gratuito
+     2. Activa "Realtime Database" (modo de prueba está bien para un taller de 1 día)
+     3. Copia tu config (Configuración del proyecto → tus apps → SDK config) y pégala abajo
+     4. Haz lo mismo en Panel_Admin_LABPP.html con el MISMO config
+═══════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDtnHUQkA0WmHYRbya0XGsIqY49g4Qr-1I",
+  authDomain: "labpp-taller-interno---2026.firebaseapp.com",
+  databaseURL: "https://labpp-taller-interno---2026-default-rtdb.firebaseio.com",
+  projectId: "labpp-taller-interno---2026",
+  storageBucket: "labpp-taller-interno---2026.firebasestorage.app",
+  messagingSenderId: "58487793870",
+  appId: "1:58487793870:web:3facbb614e7f3c9c6e489f"
+};
+if (firebaseConfig.projectId === "REEMPLAZA") { document.getElementById('setupBanner').classList.add('show'); }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.submitToFirebase = async function() {
+  const mesa = document.getElementById('mesa').value.trim();
+  if (!mesa) { showToast('⚠️ Escribe el nombre de la mesa antes de enviar','warn'); return; }
+  showToast('📤 Enviando…','info');
+  try {
+    const data = collectData();
+    await set(ref(db, 'respuestas/' + mesa.replace(/[^a-zA-Z0-9\-_]/g,'_')), data);
+    localStorage.setItem('labpp_taller_v1', JSON.stringify(data));
+    document.getElementById('submittedOverlay').classList.add('show');
+    showToast('✅ ¡Enviado exitosamente!');
+  } catch(e) { showToast('❌ Error al enviar. Verifica tu conexión o la configuración de Firebase.','error'); }
+};
+</script>
+
+<script>
+const FIELDS = ['mesa','integrantes','relator','direccion',
+  'e1t1-arg','e1-fuente-elegida','e1-por-que','e1-observacion','e1t3-arg',
+  'e2t1-arg','e2-calculo','e2-tendencia','e2-interpretacion','e2t3-arg',
+  'e3-factor','e3-linea-valor','e3-linea-anio','e3-meta','e3-frecuencia','e3-justif','e3-objetivo','e3-verificacion','e3-responsable','e3-desagregacion','e3-cmvoad',
+  'ref1','ref2','ref3'];
+const RADIOS = ['e1t1','e2t1','e3tipo'];
+
+function collectData(){
+  const data={timestamp:new Date().toISOString()};
+  FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value||''});
+  RADIOS.forEach(n=>{const r=document.querySelector(`input[name="${n}"]:checked`);data['radio_'+n]=r?r.value:''});
+  return data;
+}
+
+function countChars(el,id){document.getElementById(id).textContent=el.value.length+' caracteres';updateProgress()}
+
+document.querySelectorAll('.option-label input[type="radio"]').forEach(r=>{
+  r.addEventListener('change',function(){
+    document.querySelectorAll(`input[name="${this.name}"]`).forEach(x=>x.closest('.option-label').classList.remove('selected'));
+    this.closest('.option-label').classList.add('selected');
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const filled=[...RADIOS.filter(n=>document.querySelector(`input[name="${n}"]:checked`)),...['mesa','relator','integrantes'].filter(id=>document.getElementById(id)&&document.getElementById(id).value.trim())].length;
+  const total=RADIOS.length+3;
+  document.getElementById('progressBar').style.width=Math.round(filled/total*100)+'%';
+}
+
+document.querySelectorAll('input[type="text"],select').forEach(el=>{
+  el.addEventListener('input',updateProgress);el.addEventListener('change',updateProgress);
+});
+
+function saveLocal(){localStorage.setItem('labpp_taller_v1',JSON.stringify(collectData()));showToast('💾 Borrador guardado')}
+
+function loadLocal(){
+  const raw=localStorage.getItem('labpp_taller_v1');if(!raw)return;
+  try{
+    const data=JSON.parse(raw);
+    FIELDS.forEach(id=>{const el=document.getElementById(id);if(el&&data[id])el.value=data[id]});
+    RADIOS.forEach(n=>{const val=data['radio_'+n];if(val){const r=document.querySelector(`input[name="${n}"][value="${val}"]`);if(r){r.checked=true;r.closest('.option-label').classList.add('selected')}}});
+    document.querySelectorAll('textarea').forEach(ta=>{const el=document.getElementById(ta.id+'-cnt');if(el)el.textContent=ta.value.length+' caracteres'});
+    updateProgress();
+  }catch(e){}
+}
+
+function clearForm(){
+  if(!confirm('¿Limpiar todas las respuestas?'))return;
+  localStorage.removeItem('labpp_taller_v1');
+  document.querySelectorAll('input[type="text"],textarea').forEach(el=>el.value='');
+  document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  document.querySelectorAll('.option-label').forEach(l=>l.classList.remove('selected'));
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.char-count').forEach(el=>el.textContent='0 caracteres');
+  updateProgress();showToast('🗑️ Formulario limpiado');
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=type==='error'?'#9B3333':type==='warn'?'#8A5000':type==='info'?'var(--navy)':'var(--green)';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+setInterval(saveLocal,30000);
+window.addEventListener('load',()=>{loadLocal();updateProgress()});
+</script>
+</body>
+</html>
